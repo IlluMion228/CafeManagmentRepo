@@ -1,0 +1,44 @@
+CREATE TABLE Customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) UNIQUE NOT NULL
+);
+CREATE TABLE MenuItems (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    category VARCHAR(50) NOT NULL
+);
+CREATE TABLE Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+);
+CREATE TABLE OrderItems (
+    order_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    PRIMARY KEY (order_id, item_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES MenuItems(item_id) ON DELETE CASCADE
+);
+-- Добавление клиентов
+INSERT INTO Customers (name, phone) VALUES 
+('Иван Петров', '0888123456'),
+('Мария Иванова', '0888765432');
+
+-- Добавление блюд
+INSERT INTO MenuItems (name, price, category) VALUES 
+('Пицца Маргарита', 10.50, 'Основно'),
+('Кола', 2.00, 'Напитка'),
+('Тирамису', 5.50, 'Десерт');
+
+-- Добавление заказа
+INSERT INTO Orders (customer_id, order_date) VALUES 
+(1, CURRENT_DATE);
+
+-- Добавление позиций в заказ
+INSERT INTO OrderItems (order_id, item_id, quantity) VALUES 
+(1, 1, 2),  -- 2 пиццы
+(1, 2, 1);  -- 1 кола
